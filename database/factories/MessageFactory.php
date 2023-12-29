@@ -17,7 +17,9 @@ class MessageFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'user_id' => \App\Models\User::pluck('id')->random(),
+            'room_id' => \App\Models\Room::pluck('id')->random(),
+            'body' => fake()->sentence()
         ];
     }
 }

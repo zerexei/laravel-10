@@ -60,8 +60,18 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
-    public function isAdmin()
+    // public function room()
+    // {
+    //     return $this->belongsToMany(Room::class, 'room_user');
+    // }
+
+    public function isAdmin(): bool
     {
-        return true;
+        return $this->email === 'test@example.com';
+    }
+
+    public function isSuperadmin(): bool
+    {
+        return $this->role === 'superadmin';
     }
 }

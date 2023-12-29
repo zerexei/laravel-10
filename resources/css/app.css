@@ -5,3 +5,31 @@
 [x-cloak] {
     display: none;
 }
+
+.bug {
+    border: 1px solid red;
+}
+
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+/* Track */
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: lightgray;
+}
+
+/* Handle */
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: darkgray;
+    cursor: pointer;
+    /* Add cursor property here */
+}
+
+/* Handle on hover */
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: gray;
+    /* Change color on hover if desired */
+}

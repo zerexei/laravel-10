@@ -1,6 +1,8 @@
 <?php
 
 use App\Events\MessageCreated;
+use App\Http\Controllers\UserController;
+use App\Models\Room;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -17,7 +19,9 @@ use Inertia\Inertia;
 |
 */
 
-auth()->loginUsingId(1);
+// auth()->loginUsingId(1);
+
+Route::get('/test', UserController::class);
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -36,4 +40,39 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
+    // +++> Room
+    Route::prefix('/rooms')->group(function () {
+        Route::get('', function () {
+            $rooms = Room::with(['participants:id'])->get(['id', 'title']);
+            return Inertia::render('Rooms/Dashboard', [
+                'rooms' => $rooms
+            ]);
+        })->name('rooms.index');
+
+        Route::get('{room}', function (Room $room) {
+            $room->load(['messages:id,room_id,body', 'participants:id,name,email']);
+            return Inertia::render('Rooms/Show', [
+                'room' => $room
+            ]);
+        })->name('rooms.show');
+    });
+
+    // +++> Message
+    Route::prefix('/rooms/{room}/messages')->group(function () {
+        Route::post('', function (Room $room) {
+            request()->validate([
+                'message' => ['required', 'string', 'max:255']
+            ]);
+
+            $message = $room->messages()->create([
+                'user_id' => auth()->id(),
+                'body' => request('message')
+            ]);
+
+            event(new MessageCreated($message));
+
+            return redirect()->route('rooms.show', $room)->with('success', 'Message created.');
+        })->name('messages.store');
+    });
 });
